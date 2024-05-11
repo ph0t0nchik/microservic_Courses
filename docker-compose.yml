@@ -1,0 +1,86 @@
+version: '3.1'
+
+volumes:
+  postgres_data:
+    driver: local
+  courses-db:
+  postgres:
+  pgadmin:
+  keycloak:
+
+services:
+  courses-db:
+    container_name: courses-db
+    image: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: microservice_db1
+      PGDATA: /data/postgres
+    volumes:
+      - courses-db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: 123456
+    healthcheck:
+      test: "exit 0"
+    ports:
+      - 5435:5435
+
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:18.0.0
+    command: start-dev
+    environment:
+      - KC_DB=postgres
+      - KC_DB_URL_HOST=postgres
+      - KC_DB_URL_DATABASE=keycloak
+      - KC_DB_PASSWORD=123456
+      - KC_DB_USERNAME=keycloak
+      - KC_DB_SCHEMA=public
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=password
+      - KEYCLOAK_REALM=courses_realm
+    ports:
+      - 8181:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  app:
+    restart: always
+    container_name: app_container
+    build: .
+    ports:
+      - "1111:1111"
+    environment:
+      - db-url=jdbc:postgresql://host.docker.internal:5432/microservice_db1
+      - db-username=admin
+      - db-password=password
+      - SPRING_DATASOURCE_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://host.docker.internal:8181/realms/master
+    depends_on:
+      - courses-db
