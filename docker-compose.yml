@@ -71,16 +71,17 @@ services:
       postgres:
         condition: service_healthy
 
-  app:
-    restart: always
-    container_name: app_container
-    build: .
-    ports:
-      - "1111:1111"
-    environment:
-      - db-url=jdbc:postgresql://host.docker.internal:5432/microservice_db1
-      - db-username=admin
-      - db-password=password
-      - SPRING_DATASOURCE_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://host.docker.internal:8181/realms/master
-    depends_on:
-      - courses-db
+#  app:
+#    restart: always
+#    container_name: app_container
+#    build: .
+#    ports:
+#      - "1111:1111"
+#    environment:
+##      - db-url=jdbc:postgresql://host.docker.internal:5432/microservice_db1
+#      - db-url=jdbc:postgresql://localhost:5432/microservice_db1
+#      - db-username=admin
+#      - db-password=password
+#      - SPRING_DATASOURCE_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://host.docker.internal:8181/realms/master
+#    depends_on:
+#      - courses-db

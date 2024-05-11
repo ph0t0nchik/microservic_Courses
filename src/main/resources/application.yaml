@@ -3,8 +3,8 @@ spring:
 #    url: jdbc:postgresql://localhost:5432/microservice_db
 #    username: postgres
 #    password: admin
-#    url: jdbc:postgresql://localhost:5432/microservice_db1
-    url: jdbc:postgresql://host.docker.internal:5432/microservice_db1
+    url: jdbc:postgresql://localhost:5432/microservice_db1
+#    url: jdbc:postgresql://host.docker.internal:5432/microservice_db1
     username: admin
     password: password
     driver-class-na me: org.postgresql.Driver
@@ -17,14 +17,14 @@ spring:
       resourceserver:
         jwt:
 #          issuer-uri: http://localhost:8181/realms/courses_realm
-          issuer-uri: http://host.docker.internal:8181/realms/master
-#          issuer-uri: http://localhost:8181/realms/master
+#          issuer-uri: http://host.docker.internal:8181/realms/master
+          issuer-uri: http://localhost:8181/realms/master
 
 server:
   port: 1111
 
 keycloak:
-  uri: 'http://host.docker.internal:8181/'
-#  uri: 'http://localhost:8181/'
+#  uri: 'http://host.docker.internal:8181/'
+  uri: 'http://localhost:8181/'
 #  realm: "courses_realm"
   realm: "master"
