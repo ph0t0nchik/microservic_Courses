@@ -1,31 +1,38 @@
 spring:
   datasource:
-#    url: jdbc:postgresql://localhost:5432/microservice_db
-#    username: postgres
-#    password: admin
 #    url: jdbc:postgresql://localhost:5432/microservice_db1
-    url: jdbc:postgresql://postgres:5432/microservice_db1
-#    url: jdbc:postgresql://host.docker.internal:5432/microservice_db1
+#    url: jdbc:postgresql://postgres:5432/microservice_db1
+    url: jdbc:postgresql://host.docker.internal:5432/microservice_db1
     username: admin
     password: password
-    driver-class-na me: org.postgresql.Driver
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
       dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
   security:
     oauth2:
       resourceserver:
         jwt:
-#          issuer-uri: http://localhost:8181/realms/courses_realm
-#          issuer-uri: http://host.docker.internal:8181/realms/master
           issuer-uri: http://localhost:8181/realms/master
-
 server:
-  port: 1111
+  port: ${SERVER_PORT:1111}
+
+logging:
+  level:
+    root: INFO
 
 keycloak:
-#  uri: 'http://host.docker.internal:8181/'
   uri: 'http://localhost:8181/'
-#  realm: "courses_realm"
   realm: "master"
+
+management:
+  endpoints.web.exposure.include: 'prometheus, health'
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
