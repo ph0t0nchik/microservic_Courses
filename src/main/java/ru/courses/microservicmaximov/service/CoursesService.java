@@ -1,9 +1,11 @@
 package ru.courses.microservicmaximov.service;
 
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.stereotype.Service;
 import ru.courses.microservicmaximov.model.Course;
 
 import java.util.List;
+
 
 public interface CoursesService {
     List<Course> findAllCourses();
